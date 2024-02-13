@@ -1,0 +1,59 @@
+Parameters:
+  InstanceTypeParameter:
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - m1.small
+      - m1.large
+    Description: Enter t2.micro, m1.small, or m1.large. Default is t2.micro.
+  
+  KeyPair:
+    Type: AWS::EC2::KeyPair::KeyName
+
+Mappings: 
+  RegionMap: 
+    us-east-1: 
+      AMI: "ami-0e731c8a588258d0d"
+    us-east-2: 
+      AMI: "ami-0c20d88b0021158c6"
+    us-west-1: 
+      AMI: "ami-02d3fd86e6a2f5122"
+
+
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceTypeParameter
+      KeyName: !Ref KeyPair
+      ImageId: !FindInMap
+        - RegionMap
+        - !Ref AWS::Region
+        - AMI
+
+      Tags:
+        - Key: "Name"
+          Value: !Join
+            - " "
+            - - "MyInstance"
+              - !Ref AWS::Region
+            
+      SecurityGroups:
+        - !Ref MySecurityGroup
+
+  MySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow ssh and http to client host
+      
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 103.225.244.10/32
+
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 103.225.244.10/32
