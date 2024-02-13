@@ -1,0 +1,1 @@
+# Simple cloudformation template to launch an EC2 instance
