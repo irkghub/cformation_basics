@@ -6,4 +6,4 @@ Resources:
       ImageId: ami-0cf10cdf9fcd62d37
       Tags:
         - Key: "Name"
-          Value: "MyFirstInstance"
+          Value: !Join ["_",[My, Instance, From, Cloudformation]]
